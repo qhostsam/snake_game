@@ -1,0 +1,189 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <windows.h>
+#include <conio.h>
+#include <time.h>
+char yilan='a' ;
+int x,y,i;
+char ye;
+int oyun_hizi=0;
+int dx = 1, dy = 0;  // Başlangıç yönü (sağa doğru hareket)
+    	//tekrar:
+/* run this program using the console pauser or add your own getch, system("pause") or input loop */
+void gotoxy(int x, int y){
+    COORD coord;
+    coord.X = y;
+    coord.Y = x;
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);}
+    int width = 40, height = 20;
+int food_x, food_y;
+int snakeX[100], snakeY[100];  
+int snakeLength = 1;  // Yılanın uzunluğu (başlangıçta 1)
+void moveSnake() {
+    // Eski başı kaydet
+    int prevX = snakeX[0];
+    int prevY = snakeY[0];
+    
+    // Yılanın başını yeni konuma taşı
+    snakeX[0] += dx;
+    snakeY[0] += dy;
+
+    // Yılanın vücudunu taşırken son segmenti sil
+    for (i = 1; i < snakeLength; i++) {
+        int tempX = snakeX[i];
+        int tempY = snakeY[i];
+        snakeX[i] = prevX;
+        snakeY[i] = prevY;
+        prevX = tempX;
+        prevY = tempY;
+    }
+}
+
+void drawSnake() {
+    // Yılanın her segmentini ekranda çiz
+    for ( i = 0; i < snakeLength; i++) {
+        gotoxy(snakeY[i], snakeX[i]);
+        if (i == 0)
+            printf("%c", yilan);  // Yılanın başı
+        else
+            printf("o");  // Yılanın vücudu
+    }
+}
+int main(void) {
+    	int j,k,i,puan;
+    	tekrar:
+    	snakeLength = 1;
+    	oyun_hizi=0;
+        x = 10;
+        y = 10;
+        snakeX[0] = x;
+        snakeY[0] = y;
+        puan=0;
+    	system("cls");
+    printf("YILAN OYUNUNA HOSGELDINIZ HADI BASLAYALIM");
+    getch();
+    system("cls");
+    srand(time(NULL));
+
+	for(j=1;j<=20;j++){
+		for(k=1;k<=40;k++){
+			if(j==1||j==20||k==1||k==40)
+			printf(" *");
+			else
+			printf("  ");
+		}
+		printf("\n");
+	}
+	  int c;
+    int sutun = 40, satir = 12; // Baslangic pozisyonu
+    char smiley = 1; // ASCII gulen yuz karakteri
+
+    // Ilk gulen yuzu ciz
+    gotoxy(satir, sutun);
+    printf("%c", smiley);
+//spawnFood(width, height);
+    food_x = rand() % (width - 2) + 2;
+    food_y = rand() % (height - 3) + 2;
+    gotoxy(food_y, food_x);
+    printf("/");
+
+    while (1){
+          
+            
+            
+            if (_kbhit()) {
+            char c = _getch();
+            if (c == 224) c = _getch();  // Yön tuşları için ekstra _getch()
+
+            // Yön değiştirme mantığı
+            if (c == 'M' && dx == 0) { dx = 1; dy = 0; }  // Sağ
+            if (c == 'K' && dx == 0) { dx = -1; dy = 0; } // Sol
+            if (c == 'H' && dy == 0) { dx = 0; dy = -1; } // Yukarı
+            if (c == 'P' && dy == 0) { dx = 0; dy = 1; }  // Aşağı
+        }
+
+        // Yılanın eski pozisyonunu temizle
+        gotoxy(y, x);
+        printf(" ");
+
+        // Yılanın yeni pozisyonunu hesapla
+        x += dx;
+        y += dy;
+             gotoxy(snakeY[snakeLength-1], snakeX[snakeLength-1]);
+        printf(" "); // Yılanın son segmentini sil
+            
+                 moveSnake();
+
+        // Yılanın başını ekranda çiz
+        drawSnake();
+            
+            
+    if(x==food_x && y==food_y){
+    	if(ye=='/'){
+		oyun_hizi=oyun_hizi+10;
+    	puan=puan+10;}
+    	if(ye=='%'){
+		oyun_hizi=oyun_hizi+10;
+    	puan=puan+5;}
+    	if(ye=='!'){
+		oyun_hizi=oyun_hizi+10;
+    	puan=puan+15;}
+    	if(ye=='|'){
+		oyun_hizi=oyun_hizi+10;
+    	puan=puan+20;}
+    	if(ye=='@'){
+		oyun_hizi=oyun_hizi+10;
+    	puan=puan+25; }
+    food_x = rand() % (width - 2) + 2;
+    food_y = rand() % (height - 3) + 2;
+    gotoxy(food_y, food_x);
+    int s=rand()% 4;
+    if(s==1){
+    printf("@");
+    ye='@';
+     snakeLength++;
+}
+    else if(s==2){
+	ye='|';
+	  snakeLength++;
+    printf("|");}
+    else if(s==3){
+ye='!';
+  snakeLength++;
+    printf("!");}
+    else if(s==4){
+    	 snakeLength++;
+	ye='%';
+    printf("%");}
+    else{
+    printf("/");
+    ye='/';
+    
+}
+
+    }
+    
+    gotoxy(y, x);
+    printf("%c", yilan);
+           
+
+            // Karakterin konumunu en alt satirda goster
+            gotoxy(22, 0);
+            printf("Satir : %d, Sutun : %d   ", y, x); // Sonundaki bosluklar kalan yaziyi sil
+            gotoxy(23,0);
+            printf("puan:%d",puan);
+            if(y==19 || y==1 || x==79 || x==1){
+                    gotoxy(23,0);
+
+                    Sleep(15);
+
+                    goto tekrar;
+            }
+  Sleep(200-oyun_hizi); // Hareket hızı
+        }
+        
+
+
+
+    return 0;
+}
